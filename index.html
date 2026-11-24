@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BIMコミュニティ 情報共有</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1f2933; --sub:#667085; --accent:#1769aa; --line:#e4e7ec; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14171c; --card:#1d2229; --text:#e6e9ee; --sub:#98a2b3; --accent:#6bb3f0; --line:#2b323b; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,"Hiragino Sans","Yu Gothic UI",sans-serif; line-height:1.7; }
+  header, main { max-width:760px; margin:0 auto; padding:0 16px; }
+  header { padding-top:32px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .updated { color:var(--sub); font-size:.85rem; }
+  h2 { font-size:1.1rem; margin:32px 0 12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .meta { color:var(--sub); font-size:.8rem; }
+  .card a { color:var(--accent); font-weight:600; text-decoration:none; }
+  .card a:hover { text-decoration:underline; }
+  .note { margin:4px 0 0; font-size:.9rem; }
+  footer { max-width:760px; margin:40px auto; padding:0 16px; color:var(--sub); font-size:.8rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>BIMコミュニティ 情報共有</h1>
+  <div class="updated">最終更新: <span id="updated"></span></div>
+</header>
+<main>
+  <h2>📅 イベント</h2>
+  <div id="events"></div>
+  <h2>📰 ニュース</h2>
+  <div id="news"></div>
+</main>
+<footer>リンク先の情報は各提供元のものです。参加前・利用前に必ず元ページをご確認ください。</footer>
+<script src="data.js"></script>
+<script>
+  const d = window.SITE_DATA;
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const safeUrl = u => /^https?:\/\//.test(u) ? u : "#";
+  const render = (id, items, label) => {
+    document.getElementById(id).innerHTML = items.length
+      ? items.map(i => `<div class="card">
+          <div class="meta">${esc(i.date)}${i.source ? " ・ " + esc(i.source) : ""}</div>
+          <a href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener noreferrer">${esc(i.title)}</a>
+          ${i.note ? `<p class="note">${esc(i.note)}</p>` : ""}
+        </div>`).join("")
+      : `<div class="card meta">${label}はまだありません</div>`;
+  };
+  document.getElementById("updated").textContent = d.updated;
+  render("events", d.events, "イベント");
+  render("news", d.news, "ニュース");
+</script>
+</body>
+</html>
